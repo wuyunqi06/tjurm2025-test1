@@ -1,5 +1,5 @@
 #include "tests.h"
-
+#include <bits/stdc++.h>
 // 练习1，实现库函数strlen
 int my_strlen(char *str) {
     /**
@@ -7,6 +7,11 @@ int my_strlen(char *str) {
      */
 
     // IMPLEMENT YOUR CODE HERE
+    const char* s;
+    for (s = str; *s; ++s) {
+        
+    }
+    return (unsigned int)(s - str);
     return 0;
 }
 
@@ -19,19 +24,33 @@ void my_strcat(char *str_1, char *str_2) {
      */
 
     // IMPLEMENT YOUR CODE HERE
+    while (*str_1) {
+        str_1++;
+    }
+    while (*str_2) {
+        *str_1 = *str_2;
+        str_1++;
+        str_2++;
+    }
+    *str_1 = '\0';
+
 }
 
 
 // 练习3，实现库函数strstr
 char* my_strstr(char *s, char *p) {
-    /**
-     * 在字符串s中搜索字符串p，如果存在就返回第一次找到的地址，不存在就返回空指针(0)。
-     * 例如：
-     * s = "123456", p = "34"，应该返回指向字符'3'的指针。
-     */
-
-    // IMPLEMENT YOUR CODE HERE
-    return 0;
+    for(char* cp = s; *cp; cp++){
+        const char* s1 = cp;
+        const char* s2 = p;
+        while(*s1 && *s2 && *s1 == *s2){
+            s1++;
+            s2++;
+        }
+        if (!*s2){
+            return cp;
+        }
+    }
+    return nullptr;
 }
 
 
@@ -96,9 +115,25 @@ void rgb2gray(float *in, float *out, int h, int w) {
      */
 
     // IMPLEMENT YOUR CODE HERE
-    // ...
-}
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
 
+            int index = (i * w + j) * 3; 
+
+
+            float r = in[index];
+            float g = in[index + 1];
+            float b = in[index + 2];
+
+
+            float gray = 0.1140 * b + 0.5870 * g + 0.2989 * r;
+
+
+            out[i * w + j] = gray;
+    
+    }
+}
+}
 // 练习5，实现图像处理算法 resize：缩小或放大图像
 void resize(float *in, float *out, int h, int w, int c, float scale) {
     /**
@@ -198,12 +233,50 @@ void resize(float *in, float *out, int h, int w, int c, float scale) {
 
     int new_h = h * scale, new_w = w * scale;
     // IMPLEMENT YOUR CODE HERE
-
+    for(int y = 0; y < new_h ; y++){
+        for(int x = 0; x < new_w; x++){
+            for(int k = 0; k < c; k++){
+            float x0 = x / scale;
+            float y0 = y / scale;
+            int x1 = static_cast<int>(x0);
+            int y1 = static_cast<int>(y0);
+            int x2 = x1 + 1;
+            int y2 = y1 + 1;
+            if( x1 == w - 1){
+                x1 = w - 2;
+                x2 = w -1;
+            }
+            if( y1 == h - 1){
+                y1 = h - 2;
+                y2 = h - 1;
+            }
+            if (x1 == -1){
+                x1 = 0;
+                x2 = 1;
+            }
+            if (y1 == -1){
+                y1 = 0;
+                y2 = 1;
+            }
+            int dx = x0 - x1;
+            int dy = y0 - y1;
+            float P1 = in[(y2 * w + x1) * c + k];
+            float P2 = in[(y2 * w + x2) * c + k];
+            float P3 = in[(y1 * w + x1) * c + k];
+            float P4 = in[(y1 * w + x2) * c + k];
+            float Q  = P1 * (1 - dx)*(1 - dy) + P2 * dx*(1 - dy)+ P3 * (1 - dx)*dy + P4 * dx * dy;
+            out[(y * new_w + x)*c + k] = Q;
+            }
+        }
+    }
+            
+        
+    
 }
 
 
 // 练习6，实现图像处理算法：直方图均衡化
-void hist_eq(float *in, int h, int w) {
+void hist_eq(float *in,int h, int w) {
     /**
      * 将输入图片进行直方图均衡化处理。参数含义：
      * (1) float *in: 输入的灰度图片。
@@ -221,4 +294,28 @@ void hist_eq(float *in, int h, int w) {
      */
 
     // IMPLEMENT YOUR CODE HERE
+    float arr[256];
+    int k;
+    for(int i = 0 ; i < 256 ; i++){
+        arr[i] = 0;
+    }
+    for(int y = 0; y < h ; y++){
+        for(int x = 0; x < w; x++){
+            k = in[y * w + x];
+            arr[k] += 1 ;
+        }
+    }
+    for(int t = 1; t < 256 ; t++){
+        arr[t] += arr[t-1];
+    }
+    for(int p = 0; p < 256 ; p++){
+        arr[p] *= 255;
+        arr[p] /= (w * h);
+    }
+    for(int m = 0; m < h ; m++){
+        for(int n = 0; n < w; n++){
+            k = in[m * w + n];
+            in[m * w + n] = arr[k];
+        }
+    }
 }
