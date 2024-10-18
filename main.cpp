@@ -111,7 +111,7 @@ void test_hist_eq() {
               << "，通道数为" << c
               << std::endl;
 
-    hist_eq(img, h, w);
+    hist_eq(img,h, w);
 
     char *out_path = "../images/hist_eq/output.jpg";
     imwrite(out_path, img, h, w, 1);
@@ -155,6 +155,16 @@ void test_resize() {
 }
 
 int main() {
+    std::cout << "开始测试函数 << my_strlen >> ..." << std::endl;
+    test_strlen();
+    std::cout << "开始测试函数 << my_strcat >> ..." << std::endl;
+    test_strcat();
+    std::cout << "开始测试函数 << my_strstr >> ..." << std::endl;
+    test_strstr();
+    std::cout << "开始测试函数 << my_rgb2gray >> ..." << std::endl;
+    test_rgb2gray();
+    std::cout << "开始测试函数 << resize >> ..." << std::endl;
+    test_resize();
     std::cout << "开始测试函数 << my_hist-eq >> ..." << std::endl;
     test_hist_eq();
     return 0;
